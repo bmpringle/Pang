@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+sudo cp -fr SFML/extlibs/libs-osx/Frameworks/* /Library/Frameworks/
