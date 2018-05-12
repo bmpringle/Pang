@@ -7,7 +7,7 @@
 #include <cmath>
 #include <ctime>
 #include <cstdlib>
-
+#include <iostream>
 
 ////////////////////////////////////////////////////////////
 /// Entry point of application
@@ -78,7 +78,7 @@ int main()
     pauseMessage.setCharacterSize(40);
     pauseMessage.setPosition(170.f, 150.f);
     pauseMessage.setFillColor(sf::Color::White);
-    pauseMessage.setString("Welcome to SFML pong!\nPress space to start the game");
+    pauseMessage.setString("Welcome to SFML pong!\nPress 1 to start the game in single player, and press 2 to start the game in multiplayer!");
 
     // Define the paddles properties
     sf::Clock AITimer;
@@ -89,7 +89,9 @@ int main()
     float ballAngle         = 0.f; // to be changed later
 
     sf::Clock clock;
-    bool isPlaying = false;
+    bool isPlayingS = false;
+    bool isPlayingMPL = false;
+    bool isPlayingMPN = false;
     while (window.isOpen())
     {
         // Handle events
@@ -104,13 +106,13 @@ int main()
                 break;
             }
 
-            // Space key pressed: play
-            if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Space))
+            // if 1 key pressed: play
+            if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Num1))
             {
-                if (!isPlaying)
+                if (!isPlayingS)
                 {
                     // (re)start the game
-                    isPlaying = true;
+                    isPlayingS = true;
                     clock.restart();
 
                     // Reset the position of the paddles and ball
@@ -127,24 +129,48 @@ int main()
                     while (std::abs(std::cos(ballAngle)) < 0.7f);
                 }
             }
+           
+            if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Num2))
+            {
+                if (!isPlayingMPL)
+                {
+                    // (re)start the game
+                    isPlayingMPL = true;
+                    clock.restart();
+
+                    // Reset the position of the paddles and ball
+                    leftPaddle.setPosition(10 + paddleSize.x / 2, gameHeight / 2);
+                    rightPaddle.setPosition(gameWidth - 10 - paddleSize.x / 2, gameHeight / 2);
+                    ball.setPosition(gameWidth / 2, gameHeight / 2);
+
+                    // Reset the ball angle
+                    do
+                    {
+                        // Make sure the ball initial angle is not too much vertical
+                        ballAngle = (std::rand() % 360) * 2 * pi / 360;
+                    }
+                    while (std::abs(std::cos(ballAngle)) < 0.7f);
+                }
+            }
+
         }
 
-        if (isPlaying)
+        if (isPlayingS)
         {
             float deltaTime = clock.restart().asSeconds();
 
-            // Move the player's paddle
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) &&
+            // Move the player 1's paddle
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) &&
                (leftPaddle.getPosition().y - paddleSize.y / 2 > 5.f))
             {
                 leftPaddle.move(0.f, -paddleSpeed * deltaTime);
             }
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) &&
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) &&
                (leftPaddle.getPosition().y + paddleSize.y / 2 < gameHeight - 5.f))
             {
                 leftPaddle.move(0.f, paddleSpeed * deltaTime);
             }
-
+   
             // Move the computer's paddle
             if (((rightPaddleSpeed < 0.f) && (rightPaddle.getPosition().y - paddleSize.y / 2 > 5.f)) ||
                 ((rightPaddleSpeed > 0.f) && (rightPaddle.getPosition().y + paddleSize.y / 2 < gameHeight - 5.f)))
@@ -171,13 +197,109 @@ int main()
             // Check collisions between the ball and the screen
             if (ball.getPosition().x - ballRadius < 0.f)
             {
-                isPlaying = false;
-                pauseMessage.setString("You lost!\nPress space to restart or\nescape to exit");
+                isPlayingS = false;
+                isPlayingMPL = false;
+                isPlayingMPN = false;
+                pauseMessage.setString("You lost!\nPress 1 to restart in singleplayer, or 2 to start playing multiplayer!\n You can also press escape to exit.");
             }
             if (ball.getPosition().x + ballRadius > gameWidth)
             {
-                isPlaying = false;
-                pauseMessage.setString("You won!\nPress space to restart or\nescape to exit");
+                isPlayingS = false;
+                isPlayingMPL = false;
+                isPlayingMPN = false;
+                pauseMessage.setString("You won!\nPress 1 to restart in singleplayer, or 2 to start playing multiplayer!\n You can also press escape to exit.");
+            }
+            if (ball.getPosition().y - ballRadius < 0.f)
+            {
+                ballSound.play();
+                ballAngle = -ballAngle;
+                ball.setPosition(ball.getPosition().x, ballRadius + 0.1f);
+            }
+            if (ball.getPosition().y + ballRadius > gameHeight)
+            {
+                ballSound.play();
+                ballAngle = -ballAngle;
+                ball.setPosition(ball.getPosition().x, gameHeight - ballRadius - 0.1f);
+            }
+
+            // Check the collisions between the ball and the paddles
+            // Left Paddle
+            if (ball.getPosition().x - ballRadius < leftPaddle.getPosition().x + paddleSize.x / 2 &&
+                ball.getPosition().x - ballRadius > leftPaddle.getPosition().x &&
+                ball.getPosition().y + ballRadius >= leftPaddle.getPosition().y - paddleSize.y / 2 &&
+                ball.getPosition().y - ballRadius <= leftPaddle.getPosition().y + paddleSize.y / 2)
+            {
+                if (ball.getPosition().y > leftPaddle.getPosition().y)
+                    ballAngle = pi - ballAngle + (std::rand() % 20) * pi / 180;
+                else
+                    ballAngle = pi - ballAngle - (std::rand() % 20) * pi / 180;
+
+                ballSound.play();
+                ball.setPosition(leftPaddle.getPosition().x + ballRadius + paddleSize.x / 2 + 0.1f, ball.getPosition().y);
+            }
+
+            // Right Paddle
+            if (ball.getPosition().x + ballRadius > rightPaddle.getPosition().x - paddleSize.x / 2 &&
+                ball.getPosition().x + ballRadius < rightPaddle.getPosition().x &&
+                ball.getPosition().y + ballRadius >= rightPaddle.getPosition().y - paddleSize.y / 2 &&
+                ball.getPosition().y - ballRadius <= rightPaddle.getPosition().y + paddleSize.y / 2)
+            {
+                if (ball.getPosition().y > rightPaddle.getPosition().y)
+                    ballAngle = pi - ballAngle + (std::rand() % 20) * pi / 180;
+                else
+                    ballAngle = pi - ballAngle - (std::rand() % 20) * pi / 180;
+
+                ballSound.play();
+                ball.setPosition(rightPaddle.getPosition().x - ballRadius - paddleSize.x / 2 - 0.1f, ball.getPosition().y);
+            }
+        }
+        if (isPlayingMPL)
+        {
+
+            float deltaTime = clock.restart().asSeconds();
+
+            // Move the player 1's paddle
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) &&
+               (leftPaddle.getPosition().y - paddleSize.y / 2 > 5.f))
+            {
+                leftPaddle.move(0.f, -paddleSpeed * deltaTime);
+            }
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) &&
+               (leftPaddle.getPosition().y + paddleSize.y / 2 < gameHeight - 5.f))
+            {
+                leftPaddle.move(0.f, paddleSpeed * deltaTime);
+            }
+
+             // Move the player 2's paddle
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) &&
+               (rightPaddle.getPosition().y - paddleSize.y / 2 > 5.f))
+            {
+                rightPaddle.move(0.f, -paddleSpeed * deltaTime);
+            }
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) &&
+               (rightPaddle.getPosition().y + paddleSize.y / 2 < gameHeight - 5.f))
+            {
+                rightPaddle.move(0.f, paddleSpeed * deltaTime);
+            }
+
+            // Move the ball
+            float factor = ballSpeed * deltaTime;
+            ball.move(std::cos(ballAngle) * factor, std::sin(ballAngle) * factor);
+
+            // Check collisions between the ball and the screen
+            if (ball.getPosition().x - ballRadius < 0.f)
+            {
+                isPlayingS = false;
+                isPlayingMPL = false;
+                isPlayingMPN = false;
+                pauseMessage.setString("Player 2 Won!\nPress 1 to start playing in singleplayer, or 2 to restart multiplayer!\n You can also press escape to exit.");
+            }
+            if (ball.getPosition().x + ballRadius > gameWidth)
+            {
+                isPlayingS = false;
+                isPlayingMPL = false;
+                isPlayingMPN = false;
+                pauseMessage.setString("Player 1 Won!\nPress 1 to start playing in singleplayer, or 2 to restart multiplayer!\n You can also press escape to exit.");
             }
             if (ball.getPosition().y - ballRadius < 0.f)
             {
@@ -227,7 +349,7 @@ int main()
         // Clear the window
         window.clear(sf::Color(50, 200, 50));
 
-        if (isPlaying)
+        if (isPlayingS ^ isPlayingMPL ^ isPlayingMPN)
         {
             // Draw the paddles and the ball
             window.draw(leftPaddle);
