@@ -21,13 +21,19 @@ int main()
 
     // Define some constants
     const float pi = 3.14159f;
-    const int gameWidth = 800;
-    const int gameHeight = 600;
-    sf::Vector2f paddleSize(25, 100);
-    float ballRadius = 10.f;
+    
+    sf::VideoMode vmDesktop = sf::VideoMode::getDesktopMode	();
+    const unsigned int gameWidth = vmDesktop.width;
+    const unsigned int gameHeight = vmDesktop.height;
+    const unsigned int bitspixel = vmDesktop.bitsPerPixel;
+    double diagonal = sqrt (pow(vmDesktop.width,2.0) + pow(vmDesktop.height, 2.0));
+
+    sf::Vector2f paddleSize(gameWidth/32, gameHeight/6);
+    std::cout << "diagonal-->" << diagonal << "\n";
+    float ballRadius = double(diagonal/100.0);
 
     // Create the window of the application
-    sf::RenderWindow window(sf::VideoMode(gameWidth, gameHeight, 32), "SFML Pong",
+    sf::RenderWindow window(sf::VideoMode(gameWidth, gameHeight, bitspixel), "SFML Pong Remade",
                             sf::Style::Titlebar | sf::Style::Close);
     window.setVerticalSyncEnabled(true);
 
@@ -77,9 +83,9 @@ int main()
     // Define the paddles properties
     sf::Clock AITimer;
     const sf::Time AITime   = sf::seconds(0.1f);
-    const float paddleSpeed = 400.f;
+    const float paddleSpeed = vmDesktop.height/2;
     float rightPaddleSpeed  = 0.f;
-    const float ballSpeed   = 400.f;
+    const float ballSpeed   = vmDesktop.width/2;
     float ballAngle         = 0.f; // to be changed later
 
     sf::Clock clock;
