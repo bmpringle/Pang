@@ -15,6 +15,17 @@
 /// \return Application exit code
 ///
 ////////////////////////////////////////////////////////////
+
+
+sf::Vector2f rotateVector(sf::Vector2f vector, float theta)
+{
+    sf::Vector2f result;
+    float thetaRadians = theta / (2 * 3.14159f);
+    result.x = vector.x * cos(thetaRadians) - vector.y * sin(thetaRadians);
+    result.y = vector.x * sin(thetaRadians) + vector.y * cos(thetaRadians);
+    return result;
+}
+
 int main()
 {
     std::srand(static_cast<unsigned int>(std::time(NULL)));
@@ -47,6 +58,8 @@ int main()
         triangle.setOrigin(pos+ofs);
        
        
+    rotateVector(pos, 10);
+
     // Initialize the pause message
     sf::Text TitleMessage;
     TitleMessage.setFont(font);
