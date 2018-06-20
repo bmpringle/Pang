@@ -24,9 +24,9 @@ int main()
     const unsigned int gameHeight = vmDesktop.height;
     const unsigned int bitspixel = vmDesktop.bitsPerPixel;
     bool PlayingGame = false;
-    const float trianglespeed =gameHeight/2;
+    const float trianglespeed=gameHeight/2;
     sf::Vector2f trianglesize(gameWidth/32, gameHeight/20);
-    sf::Time sleep = sf::seconds(0.2f);
+    sf::Time sleep = sf::seconds(0.05f);
     
      // Create the window of the application
     sf::RenderWindow window(sf::VideoMode(gameWidth, gameHeight, bitspixel), "Experimental",
@@ -42,7 +42,10 @@ int main()
         triangle.setOutlineThickness(3);
         triangle.setOutlineColor(sf::Color::Black);
         triangle.setFillColor(sf::Color::White);
-        triangle.setOrigin(triangle.getPosition());
+        sf::Vector2f pos = triangle.getPosition();
+        sf::Vector2f ofs(80.0, 80.0);
+        triangle.setOrigin(pos+ofs);
+       
        
     // Initialize the pause message
     sf::Text TitleMessage;
@@ -54,11 +57,7 @@ int main()
 
     sf::Clock clock;
     sf::Event event;
-    sf::Vector2f trianglepointone(triangle.getPoint(0));
-    sf::Vector2f trianglepointtwo(triangle.getPoint(1));  
-    sf::Vector2f trianglepointthree(triangle.getPoint(2));
-    sf::Vector2f base(trianglepointone-trianglepointtwo);
-    std::cout << base << std::endl;
+
     while (window.isOpen())
     {
         // Handle events
@@ -104,9 +103,16 @@ int main()
             {
                 triangle.move(trianglespeed * deltaTime, 0.f);
             }
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::R))
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::E))
             {
-                triangle.rotate(90);
+                
+                triangle.rotate(10);
+                sf::sleep(sleep);
+            }
+             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
+            {
+                
+                triangle.rotate(-10);
                 sf::sleep(sleep);
             }
 
