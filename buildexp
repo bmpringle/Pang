@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+cd Exp
+mkdir build
+cd build
+cmake ../
+make -j8
+cd -
+
