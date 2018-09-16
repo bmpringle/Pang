@@ -10,21 +10,14 @@
 #include <iostream>
 
 ////////////////////////////////////////////////////////////
-/// Entry point of application
+/// Entry point of application`a
 ///
 /// \return Application exit code
 ///
 ////////////////////////////////////////////////////////////
 
 
-sf::Vector2f rotateVector(sf::Vector2f vector, float theta)
-{
-    sf::Vector2f result;
-    float thetaRadians = theta / (2 * 3.14159f);
-    result.x = vector.x * cos(thetaRadians) - vector.y * sin(thetaRadians);
-    result.y = vector.x * sin(thetaRadians) + vector.y * cos(thetaRadians);
-    return result;
-}
+
 
 int main()
 {
@@ -35,9 +28,12 @@ int main()
     const unsigned int gameHeight = vmDesktop.height;
     const unsigned int bitspixel = vmDesktop.bitsPerPixel;
     bool PlayingGame = false;
-    const float trianglespeed=gameHeight/2;
+    const float trianglespeed=gameHeight/100;
     sf::Vector2f trianglesize(gameWidth/32, gameHeight/20);
-    sf::Time sleep = sf::seconds(0.05f);
+    sf::Time sleep = sf::seconds(0.005f);
+    double diagonal = sqrt (pow(vmDesktop.width,2.0) + pow(vmDesktop.height, 2.0));
+    float ballRadius = double(diagonal/100.0);
+
     
      // Create the window of the application
     sf::RenderWindow window(sf::VideoMode(gameWidth, gameHeight, bitspixel), "Experimental",
@@ -56,10 +52,16 @@ int main()
         sf::Vector2f pos = triangle.getPosition();
         sf::Vector2f ofs(80.0, 80.0);
         triangle.setOrigin(pos+ofs);
-       
-       
-    rotateVector(pos, 10);
 
+        // Create the missile
+    sf::CircleShape missile;
+    missile.setRadius(ballRadius - 3);
+    missile.setOutlineThickness(3);
+    missile.setOutlineColor(sf::Color::Black);
+    missile.setFillColor(sf::Color::White);
+    missile.setOrigin(ballRadius / 2, ballRadius / 2);
+       
+        
     // Initialize the pause message
     sf::Text TitleMessage;
     TitleMessage.setFont(font);
@@ -73,6 +75,16 @@ int main()
 
     while (window.isOpen())
     {
+
+                  //Convert angle to radians
+        double angleRADS = (3.1415926536/180)*(triangle.getRotation());
+
+        //Set x and y
+        double fory = trianglespeed*-cos(angleRADS);
+        double forx = trianglespeed*sin(angleRADS);
+
+        std::cout << "x variable = " << forx << " y variable = " << fory << " triangle speed variable = " << trianglespeed << " angle of ship = " << triangle.getRotation() << std::endl;
+
         // Handle events
         sf::Event event;
         while (window.pollEvent(event))
@@ -96,36 +108,71 @@ int main()
         }
         if(PlayingGame)
         {
+      
+      
+          
+              
              float deltaTime = clock.restart().asSeconds();
             //Move Spaceship
-             if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) &&
-                (triangle.getPosition().y - trianglesize.y / 2 > 5.f))
+             if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
             {
-                triangle.move(0.f, -trianglespeed * deltaTime);
+                if(triangle.getPosition().y + trianglesize.y / 2 < gameHeight - 149.0f || (triangle.getRotation() >= 271 || triangle.getRotation() <= 89)) {
+
+                    if(triangle.getPosition().y - trianglesize.y / 2 > 50.0f || (triangle.getRotation() <= 269 && triangle.getRotation() >= 91)){
+                        
+                        if(triangle.getPosition().x - trianglesize.x / 2 > 100.f || (triangle.getRotation() >= 1 && triangle.getRotation() <= 179))
+                        {
+                            if(triangle.getPosition().x + trianglesize.x / 2 < gameWidth - 70.f || (triangle.getRotation() >= 181))
+                            {
+                                
+                                triangle.move(forx, fory);
+                            
+                            }
+                            
+                        }
+                    
+                        
+                    }
+                    
+                }
+                
             }
-             if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)  && (triangle.getPosition().y + trianglesize.y / 2 < gameHeight - 200.f))
+
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
             {
-                triangle.move(0.f, trianglespeed * deltaTime);
-              
+                if(triangle.getPosition().y + trianglesize.y / 2 < gameHeight - 149.0f || (triangle.getRotation() <= 269 && triangle.getRotation() >= 91)) {
+
+                    if(triangle.getPosition().y - trianglesize.y / 2 > 50.0f || (triangle.getRotation() >= 271 || triangle.getRotation() <= 89)){
+                        
+                        if(triangle.getPosition().x - trianglesize.x / 2 > 100.f || (triangle.getRotation() <= 359 && triangle.getRotation() >= 181))
+                        {
+                            if(triangle.getPosition().x + trianglesize.x / 2 < gameWidth - 70.f || (triangle.getRotation() <= 179))
+                            {
+                                
+                                triangle.move(-forx, -fory);
+                            
+                            }
+                            
+                        }
+                    
+                        
+                    }
+                    
+                }
+                
             }
-             if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) && (triangle.getPosition().x - trianglesize.x / 2 > 5.f))
-            {
-                triangle.move(-trianglespeed * deltaTime, 0.f);
-            }
-             if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) && (triangle.getPosition().x + trianglesize.x / 2 < gameWidth - 200.f))
-            {
-                triangle.move(trianglespeed * deltaTime, 0.f);
-            }
+
+             
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::E))
             {
                 
-                triangle.rotate(10);
+                triangle.rotate(5);
                 sf::sleep(sleep);
             }
              if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
             {
                 
-                triangle.rotate(-10);
+                triangle.rotate(-5);
                 sf::sleep(sleep);
             }
 
@@ -134,6 +181,10 @@ int main()
         window.clear(sf::Color(0, 0, 0));
         if(PlayingGame){
              window.draw(triangle);
+             if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space)){
+                    missile.setPosition(triangle.getPosition());
+                    window.draw(missile);
+             }
         }else{
         window.draw(TitleMessage);
         }
