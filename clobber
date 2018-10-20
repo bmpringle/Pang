@@ -1,2 +1,4 @@
 #!/usr/bin/env bash
 rm -fr SFML/build
+rm -fr pang/build
+rm -fr exp/build
