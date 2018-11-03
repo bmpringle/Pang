@@ -136,6 +136,10 @@ int main()
                 }
             }
         }
+
+        // Clear the window
+        window.clear(sf::Color(0, 0, 0));
+
         if(PlayingGame)
         {
             //Move Spaceship
@@ -187,11 +191,7 @@ int main()
             {
                 missile.move(15*forx, 15*fory);    
             }
-        }
-        // Clear the window
-        window.clear(sf::Color(0, 0, 0));
-        if(PlayingGame)
-        {
+
             window.draw(triangle);
 
             if(missile.getPosition().y + trianglesize.y / 2 < gameHeight - 149.0f || (triangle.getRotation() >= 271 || triangle.getRotation() <= 89)) 
@@ -222,7 +222,7 @@ int main()
             {
                 missile.setPosition(triangle.getPosition());
             }
-        } else 
+        } else // not playing game
         {
             window.draw(TitleMessage);
         }
