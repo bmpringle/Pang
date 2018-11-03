@@ -32,20 +32,18 @@ private:
     sf::Vector2f    _pos;
 };
 
-std::vector<Asteroid> createAsteroidVector(
-    int sideLength, int nSides, int lineThickness, sf::Color outlineColor, sf::Color fillColor,
-    uint numAsteroids)
-{
-    std::vector<Asteroid> vAsteroids;
-    
-    for(int i=0; i<=numAsteroids; i++){
-        Asteroid asteroid(Asteroid(sideLength,  nSides,  lineThickness, outlineColor, fillColor));
-        vAsteroids.push_back(asteroid);
-    }   
-    
-    return vAsteroids; 
-}
-
+class AsteroidField {
+public:
+    AsteroidField(int sideLength, int nSides, int lineThickness, sf::Color outlineColor, sf::Color fillColor, uint numAsteroids)
+    {
+        for(int i=0; i<=numAsteroids; i++){
+            Asteroid asteroid(Asteroid(sideLength,  nSides,  lineThickness, outlineColor, fillColor));
+            _vAsteroids.push_back(asteroid);
+        }   
+    }
+private:
+    std::vector<Asteroid> _vAsteroids;
+};
 
 int main()
 {
@@ -89,8 +87,8 @@ int main()
     missile.setFillColor(sf::Color::White);
     missile.setOrigin((ballRadius-8) / 2, (ballRadius-8) / 2);
 
-    //Create the Asteroids
-    std::vector<Asteroid> vAsteroids = createAsteroidVector(5, 8, 2, sf::Color::White, sf::Color::White, 32);
+    //Create the Asteroid Field
+    AsteroidField asteroidField = AsteroidField(5, 8, 2, sf::Color::White, sf::Color::White, 32);
            
     // Initialize the pause message
     sf::Text TitleMessage;
