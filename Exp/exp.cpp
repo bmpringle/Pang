@@ -18,6 +18,26 @@
 
 
 
+    std::vector<sf::CircleShape> CrtAsteroid(int ALength, int ASides, int AOThickness, sf::Color AOColor, sf::Color AFColor, int AAmount){
+    
+        sf::CircleShape asteroid(ALength, ASides);
+        
+        asteroid.setOutlineThickness(AOThickness);
+        asteroid.setOutlineColor(AOColor);
+        asteroid.setFillColor(AFColor);
+        
+        sf::Vector2f pos = asteroid.getPosition();
+        sf::Vector2f ofs(ALength, ALength);
+        asteroid.setOrigin(pos+ofs);
+        std::vector<sf::CircleShape> Asteroid;
+        
+        for(int i=0; i<=AAmount; i++){
+           Asteroid.push_back(asteroid);
+        }   
+        
+        return Asteroid; 
+    }
+
 
 int main()
 {
@@ -55,11 +75,22 @@ int main()
 
         // Create the missile
     sf::CircleShape missile;
-    missile.setRadius(ballRadius - 3);
+    missile.setRadius(ballRadius - 8);
     missile.setOutlineThickness(3);
     missile.setOutlineColor(sf::Color::Black);
     missile.setFillColor(sf::Color::White);
-    missile.setOrigin(ballRadius / 2, ballRadius / 2);
+    missile.setOrigin((ballRadius-8) / 2, (ballRadius-8) / 2);
+
+        
+
+        //Create the Asteroids
+        int AAmount =1;
+    std::vector<sf::CircleShape> Asteroid =CrtAsteroid(80, 6, 8, sf::Color::White, sf::Color::Black, AAmount);
+    for(int i=0; i<=AAmount; i++){
+           Asteroid[i];
+        } 
+   
+    
        
         
     // Initialize the pause message
@@ -72,6 +103,7 @@ int main()
 
     sf::Clock clock;
     sf::Event event;
+    float deltaTime=0;
 
     while (window.isOpen())
     {
@@ -83,7 +115,7 @@ int main()
         double fory = trianglespeed*-cos(angleRADS);
         double forx = trianglespeed*sin(angleRADS);
 
-        std::cout << "x variable = " << forx << " y variable = " << fory << " triangle speed variable = " << trianglespeed << " angle of ship = " << triangle.getRotation() << std::endl;
+   //     std::cout << "x variable = " << forx << " y variable = " << fory << " triangle speed variable = " << trianglespeed << " angle of ship = " << triangle.getRotation() << std::endl;
 
         // Handle events
         sf::Event event;
@@ -102,7 +134,10 @@ int main()
                 {
                     PlayingGame = true;
                     triangle.setPosition(gameWidth/2, gameHeight/2);
+                    missile.setPosition(triangle.getPosition());
                     clock.restart();
+                    deltaTime = clock.restart().asSeconds();
+                     
                 }
             }
         }
@@ -110,9 +145,9 @@ int main()
         {
       
       
-          
+             
               
-             float deltaTime = clock.restart().asSeconds();
+            
             //Move Spaceship
              if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
             {
@@ -135,18 +170,17 @@ int main()
                     }
                     
                 }
-                
             }
 
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
             {
-                if(triangle.getPosition().y + trianglesize.y / 2 < gameHeight - 149.0f || (triangle.getRotation() <= 269 && triangle.getRotation() >= 91)) {
+                if(triangle.getPosition().y + trianglesize.y / 2 < gameHeight - 149.0f || (triangle.getRotation() >= 271 || triangle.getRotation() <= 89)) {
 
-                    if(triangle.getPosition().y - trianglesize.y / 2 > 50.0f || (triangle.getRotation() >= 271 || triangle.getRotation() <= 89)){
+                    if(triangle.getPosition().y - trianglesize.y / 2 > 50.0f || (triangle.getRotation() <= 269 && triangle.getRotation() >= 91)){
                         
-                        if(triangle.getPosition().x - trianglesize.x / 2 > 100.f || (triangle.getRotation() <= 359 && triangle.getRotation() >= 181))
+                        if(triangle.getPosition().x - trianglesize.x / 2 > 100.f || (triangle.getRotation() >= 1 && triangle.getRotation() <= 179))
                         {
-                            if(triangle.getPosition().x + trianglesize.x / 2 < gameWidth - 70.f || (triangle.getRotation() <= 179))
+                            if(triangle.getPosition().x + trianglesize.x / 2 < gameWidth - 70.f || (triangle.getRotation() >= 181))
                             {
                                 
                                 triangle.move(-forx, -fory);
@@ -176,15 +210,50 @@ int main()
                 sf::sleep(sleep);
             }
 
+            if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space)){
+               
+                missile.move(15*forx, 15*fory);    
+                  
+
+            }
+
+
         }
              // Clear the window
         window.clear(sf::Color(0, 0, 0));
         if(PlayingGame){
              window.draw(triangle);
-             if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space)){
+            
+                if(missile.getPosition().y + trianglesize.y / 2 < gameHeight - 149.0f || (triangle.getRotation() >= 271 || triangle.getRotation() <= 89)) {
+
+                    if(missile.getPosition().y - trianglesize.y / 2 > 50.0f || (triangle.getRotation() <= 269 && triangle.getRotation() >= 91)){
+                        
+                        if(missile.getPosition().x - trianglesize.x / 2 > 100.f || (triangle.getRotation() >= 1 && triangle.getRotation() <= 179))
+                        {
+                            if(missile.getPosition().x + trianglesize.x / 2 < gameWidth - 70.f || (triangle.getRotation() >= 181))
+                            {
+                                 if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space)){
+               
+                                         window.draw(missile);
+                  
+
+                                     }
+                            }else{
+                                missile.setPosition(triangle.getPosition());
+                            }
+                            
+                        }else{
+                            missile.setPosition(triangle.getPosition());
+                        }
+                    
+                        
+                    }else{
+                        missile.setPosition(triangle.getPosition());
+                    }
+                    
+                }else{
                     missile.setPosition(triangle.getPosition());
-                    window.draw(missile);
-             }
+                }
         }else{
         window.draw(TitleMessage);
         }
