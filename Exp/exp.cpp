@@ -16,27 +16,37 @@
 ///
 ////////////////////////////////////////////////////////////
 
+class Asteroid {
+public:
+    Asteroid(int sideLength, int nSides, int lineThickness, sf::Color outlineColor, sf::Color fillColor);
+private:
+    sf::CircleShape _circle;
+    sf::Vector2f    _pos;
+};
 
+Asteroid::Asteroid(int sideLength, int nSides, int lineThickness, sf::Color outlineColor, sf::Color fillColor) : 
+    _circle(sideLength, nSides)
+{
+    _circle.setOutlineThickness(lineThickness);
+    _circle.setOutlineColor(outlineColor);
+    _circle.setFillColor(fillColor);
+    _pos = _circle.getPosition();
+    _circle.setOrigin(_pos + sf::Vector2f(sideLength, sideLength));
+}
 
-    std::vector<sf::CircleShape> CrtAsteroid(int ALength, int ASides, int AOThickness, sf::Color AOColor, sf::Color AFColor, int AAmount){
+std::vector<Asteroid> createAsteroidVector(
+    int sideLength, int nSides, int lineThickness, sf::Color outlineColor, sf::Color fillColor,
+    uint numAsteroids)
+{
+    std::vector<Asteroid> vAsteroids;
     
-        sf::CircleShape asteroid(ALength, ASides);
-        
-        asteroid.setOutlineThickness(AOThickness);
-        asteroid.setOutlineColor(AOColor);
-        asteroid.setFillColor(AFColor);
-        
-        sf::Vector2f pos = asteroid.getPosition();
-        sf::Vector2f ofs(ALength, ALength);
-        asteroid.setOrigin(pos+ofs);
-        std::vector<sf::CircleShape> Asteroid;
-        
-        for(int i=0; i<=AAmount; i++){
-           Asteroid.push_back(asteroid);
-        }   
-        
-        return Asteroid; 
-    }
+    for(int i=0; i<=numAsteroids; i++){
+        Asteroid asteroid(Asteroid(sideLength,  nSides,  lineThickness, outlineColor, fillColor));
+        vAsteroids.push_back(asteroid);
+    }   
+    
+    return vAsteroids; 
+}
 
 
 int main()
@@ -81,18 +91,9 @@ int main()
     missile.setFillColor(sf::Color::White);
     missile.setOrigin((ballRadius-8) / 2, (ballRadius-8) / 2);
 
-        
-
-        //Create the Asteroids
-        int AAmount =1;
-    std::vector<sf::CircleShape> Asteroid =CrtAsteroid(80, 6, 8, sf::Color::White, sf::Color::Black, AAmount);
-    for(int i=0; i<=AAmount; i++){
-           Asteroid[i];
-        } 
-   
-    
-       
-        
+    //Create the Asteroids
+    std::vector<Asteroid> vAsteroids = createAsteroidVector(5, 8, 2, sf::Color::White, sf::Color::White, 32);
+           
     // Initialize the pause message
     sf::Text TitleMessage;
     TitleMessage.setFont(font);
