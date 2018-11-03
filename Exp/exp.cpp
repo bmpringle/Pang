@@ -18,13 +18,7 @@
 
 class Asteroid {
 public:
-    Asteroid(int sideLength, int nSides, int lineThickness, sf::Color outlineColor, sf::Color fillColor);
-private:
-    sf::CircleShape _circle;
-    sf::Vector2f    _pos;
-};
-
-Asteroid::Asteroid(int sideLength, int nSides, int lineThickness, sf::Color outlineColor, sf::Color fillColor) : 
+    Asteroid(int sideLength, int nSides, int lineThickness, sf::Color outlineColor, sf::Color fillColor) :
     _circle(sideLength, nSides)
 {
     _circle.setOutlineThickness(lineThickness);
@@ -33,6 +27,10 @@ Asteroid::Asteroid(int sideLength, int nSides, int lineThickness, sf::Color outl
     _pos = _circle.getPosition();
     _circle.setOrigin(_pos + sf::Vector2f(sideLength, sideLength));
 }
+private:
+    sf::CircleShape _circle;
+    sf::Vector2f    _pos;
+};
 
 std::vector<Asteroid> createAsteroidVector(
     int sideLength, int nSides, int lineThickness, sf::Color outlineColor, sf::Color fillColor,
