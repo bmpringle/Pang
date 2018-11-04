@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-mkdir -p pong/build
-cd pong/build
-cmake ../
-make -j8
-cd -
-

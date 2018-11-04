@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 cd Exp
-./build/exp
+../build/Exp/exp
 cd -
 

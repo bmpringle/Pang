@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 cd pong
-./build/pong
+../build/pong/pong
 cd -
 

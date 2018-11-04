@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-cd SFML/build
-make -j8
-cd -
-cd Exp/build
-make -j8
-cd -

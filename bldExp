@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-mkdir -p Exp/build
-cd Exp/build
-cmake ../
-make -j8
-cd -
-

@@ -1,0 +1,7 @@
+mkdir -p build/SFML
+cd build/SFML
+cmake ../../SFML
+make -j8
+cd ..
+cmake ../
+make -j8
