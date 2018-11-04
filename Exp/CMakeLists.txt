@@ -21,6 +21,10 @@ configure_file(
   )
 include_directories("${PROJECT_BINARY_DIR}")
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS ON)
+
 # Define sources and executable
 set(EXECUTABLE_NAME "exp")
 add_executable(${EXECUTABLE_NAME} exp.cpp)
