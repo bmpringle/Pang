@@ -272,9 +272,12 @@ int main()
     sf::Clock clock;
     sf::Event event;
     
+    std::cout << "desktop: x=" << gameWidth << ", y=" << gameHeight << std::endl;
     while (window.isOpen())
     {
-        //std::cout << "x variable = " << forx << " y variable = " << fory << " triangle speed variable = " << trianglespeed << " angle of ship = " << triangle.getRotation() << std::endl;
+        //std::cout << " battleShip Velocity: x= " << battleShip.getVelocity().x;
+        //std::cout << "y=" << battleShip.getVelocity().y;
+        //std::cout << " battleShip angle = " << battleShip.getRotation() << std::endl;
 
         // Handle events
         sf::Event event;
