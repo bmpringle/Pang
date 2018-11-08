@@ -16,34 +16,7 @@
 ///
 ////////////////////////////////////////////////////////////
 
-class Asteroid {
-public:
-    Asteroid(int sideLength, int nSides, int lineThickness, sf::Color outlineColor, sf::Color fillColor) :
-    _circle(sideLength, nSides)
-{
-    _circle.setOutlineThickness(lineThickness);
-    _circle.setOutlineColor(outlineColor);
-    _circle.setFillColor(fillColor);
-    _pos = _circle.getPosition();
-    _circle.setOrigin(_pos + sf::Vector2f(sideLength, sideLength));
-}
-private:
-    sf::CircleShape _circle;
-    sf::Vector2f    _pos;
-};
 
-class AsteroidField {
-public:
-    AsteroidField(int sideLength, int nSides, int lineThickness, sf::Color outlineColor, sf::Color fillColor, uint numAsteroids)
-    {
-        for(int i=0; i<=numAsteroids; i++) {
-            Asteroid asteroid(Asteroid(sideLength,  nSides,  lineThickness, outlineColor, fillColor));
-            _vAsteroids.push_back(asteroid);
-        }   
-    }
-private:
-    std::vector<Asteroid> _vAsteroids;
-};
 
 class SpaceShip {
     const int sideLength = 80;
@@ -137,7 +110,135 @@ private:
 };
 
 
-class Missile{
+
+class Asteroid {
+public:
+    Asteroid(int sideLength, int nSides, int lineThickness, sf::Color outlineColor, sf::Color fillColor) :
+    _circle(sideLength, nSides)
+{
+    _circle.setOutlineThickness(lineThickness);
+    _circle.setOutlineColor(outlineColor);
+    _circle.setFillColor(fillColor);
+    _pos = _circle.getPosition();
+    _circle.setOrigin(_pos + sf::Vector2f(sideLength, sideLength));
+
+    
+}
+
+    sf::Vector2f getPosition(){
+    return _circle.getPosition();
+    }
+
+    void setPosition(int x, int y){
+       _circle.setPosition(x, y); 
+    }
+
+    void setPosition(sf::Vector2f position ){
+       _circle.setPosition(position); 
+    }
+
+    void Draw(sf::RenderWindow& window){
+        window.draw(_circle);
+    }
+
+private:
+    sf::CircleShape _circle;
+    sf::Vector2f    _pos;
+};
+
+class AsteroidField {
+public:
+    AsteroidField(int sideLength, int nSides, int lineThickness, sf::Color outlineColor, sf::Color fillColor, uint numAsteroids)
+    {
+        for(int i=0; i<=numAsteroids; i++) {
+           
+            
+            Asteroid asteroid(Asteroid(sideLength,  nSides,  lineThickness, outlineColor, fillColor));
+            
+            _vAsteroids.push_back(asteroid);
+        }   
+    }
+
+    void Draw(sf::RenderWindow& window, uint numAsteroids, SpaceShip battleShip){
+        
+        if(a==0){
+        for(int i=0; i<=numAsteroids; i++){
+            
+        Asteroid asteroid = _vAsteroids[i];
+        
+        asteroid.setPosition(battleShip.getPosition());
+        
+       asteroid.Draw(window);
+       a=1;
+    }
+    }else{
+       
+        for(int i=0; i<=numAsteroids; i++){
+        Asteroid asteroid = _vAsteroids[i];
+        srand(time(NULL));
+        int r = rand() % 8;
+        sf::Vector2f add(0, 0);
+        sf::Vector2f pos= asteroid.getPosition();
+        sf::Vector2f one(0, 300);
+        sf::Vector2f two(300, 300);
+        sf::Vector2f three(300, 0);
+        sf::Vector2f four(300, -300);
+        sf::Vector2f five(0, -300);
+        sf::Vector2f six(-300, -300);
+        sf::Vector2f seven(-300, 0);
+        sf::Vector2f eight(-300, 300);
+        switch(r){
+        
+        case 1:
+        add = one;
+        break;
+        
+        case 2:
+        add = two;
+        break;
+        
+        case 3:
+        add = three;
+        break;
+        
+        case 4:
+        add = four;
+        break;
+        
+        case 5:
+        add = five;
+        break;
+        
+        case 6:
+        add = six;
+        break;
+        
+        case 7:
+        add = seven;
+        break;
+        
+        case 8:
+        add = eight;
+        break;
+        }
+        sf::Vector2f newPos(pos.x+add.x, pos.y+add.y);
+        asteroid.setPosition(newPos);
+        _vAsteroids.push_back(asteroid);
+        asteroid.Draw(window);
+        }
+    }
+    
+    }
+private:
+    std::vector<Asteroid> _vAsteroids;
+    int a=0;
+};
+
+
+
+
+
+class Missile{  
     public:
 
     
@@ -253,7 +354,7 @@ int main()
 {
     std::srand(static_cast<unsigned int>(std::time(NULL)));
     
-    sf::VideoMode vmDesktop = sf::VideoMode::getDesktopMode	();
+    sf::VideoMode vmDesktop = sf::VideoMode::getDesktopMode();
     const unsigned int gameWidth = vmDesktop.width;
     const unsigned int gameHeight = vmDesktop.height;
     const unsigned int bitspixel = vmDesktop.bitsPerPixel;
@@ -264,7 +365,7 @@ int main()
     float ballRadius = double(diagonal/100.0);
 
      // Create the window of the application
-    sf::RenderWindow window(sf::VideoMode(gameWidth, gameHeight, bitspixel), "Experimental",
+    sf::RenderWindow window(sf::VideoMode(gameWidth, gameHeight, bitspixel), "Asteroids",
                             sf::Style::Titlebar | sf::Style::Close);
     window.setVerticalSyncEnabled(true);
 
@@ -280,7 +381,7 @@ int main()
     
 
     //Create the Asteroid Field
-    AsteroidField asteroidField = AsteroidField(5, 8, 2, sf::Color::White, sf::Color::White, 32);
+    AsteroidField asteroidField = AsteroidField(80, 8, 2, sf::Color::White, sf::Color::White, 2);
            
     // Initialize the pause message
     sf::Text TitleMessage;
@@ -288,7 +389,7 @@ int main()
     TitleMessage.setCharacterSize(200);
     TitleMessage.setPosition(700.f, 900.f);
     TitleMessage.setFillColor(sf::Color::White);
-    TitleMessage.setString("Welcome to Experimental!\n     Press SPACE to start!");
+    TitleMessage.setString("Welcome to Asteroids!\n     Press T to start!");
 
     sf::Clock clockm;
     sf::Clock clock;
@@ -310,7 +411,7 @@ int main()
                 window.close();
                 break;
             }
-            if((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Space))
+            if((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::T))
             {
                 if(!PlayingGame)
                 {
@@ -364,6 +465,7 @@ int main()
            
             battleShip.draw(window);
             missile.Draw(window, sf::Vector2f(gameWidth,gameHeight), battleShip);
+            asteroidField.Draw(window, 2, battleShip);
           
 
         } else // not playing game
