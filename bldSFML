@@ -1,8 +1,0 @@
-#!/usr/bin/env bash
-mkdir -p SFML/build
-cd SFML/build
-#cmake -D SFML_BUILD_EXAMPLES=TRUE ../
-cmake ../
-make -j8
-#ln -f -s $PWD/examples/pong/pong ../examples/pong/pong
-cd -

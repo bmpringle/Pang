@@ -1,4 +1,3 @@
-
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
@@ -16,6 +15,9 @@
 /// \return Application exit code
 ///
 ////////////////////////////////////////////////////////////
+
+
+
 
 
 
@@ -232,10 +234,9 @@ private:
 
 class Missile{  
     public:
-
     Missile(int radius, sf::Vector2f size, float speed)
-    : _speed(speed)
-    , _size(size)
+        : _speed(speed)
+        , _size(size)
     {
         _circle.setRadius(radius);
         _circle.setOutlineThickness(3);
@@ -274,66 +275,49 @@ class Missile{
         return _size;
     }
 
-    void Move(bool bForward, SpaceShip battleShip){
-            
-        sf::Vector2f vel = battleShip.getVelocity(); 
+    void Move(bool bForward, SpaceShip battleShip)
+    {
+        sf::Vector2f vel = battleShip.getVelocity();
         _circle.move(vel.x*15, vel.y*15);   
-              
     }
 
-    void Draw(sf::RenderWindow& window, sf::Vector2f screenSize, SpaceShip battleShip){
-            if(_circle.getPosition().y + getSize().y / 2 < screenSize.y - 149.0f) 
-            {
-                if(_circle.getPosition().y - getSize().y / 2 > 50.0f)
-                {    
-                    if(_circle.getPosition().x - getSize().x / 2 > 100.f)
+    void Draw(sf::RenderWindow& window, sf::Vector2f screenSize, SpaceShip battleShip)
+    {
+        if(_circle.getPosition().y + getSize().y / 2 < screenSize.y - 149.0f) 
+        {
+            if(_circle.getPosition().y - getSize().y / 2 > 50.0f)
+            {    
+                if(_circle.getPosition().x - getSize().x / 2 > 100.f)
+                {
+                    if(_circle.getPosition().x + getSize().x / 2 < screenSize.x - 70.f)
                     {
-                        if(_circle.getPosition().x + getSize().x / 2 < screenSize.x - 70.f)
+                        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
                         {
-                            if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
-                            {
-                            
-                                window.draw(_circle);
-                            }
-                            
-                        } else 
-                        {
-                            _circle.setPosition(battleShip.getPosition());
-                            
-                        }  
+                            window.draw(_circle);
+                        }
                     } else 
                     {
                         _circle.setPosition(battleShip.getPosition());
-                        
-                    } 
+                    }  
                 } else 
                 {
                     _circle.setPosition(battleShip.getPosition());
-                    
-                }
+                } 
             } else 
             {
                 _circle.setPosition(battleShip.getPosition());
-                
             }
+        } else 
+        {
+            _circle.setPosition(battleShip.getPosition());
+        }
     }
 
 private:
     sf::CircleShape _circle;
     float _speed;
     sf::Vector2f _size;
-    
-
 };
-
-// Create the missile
-   /* sf::CircleShape missile;
-    missile.setRadius(ballRadius - 8);
-    missile.setOutlineThickness(3);
-    missile.setOutlineColor(sf::Color::Black);
-    missile.setFillColor(sf::Color::White);
-    missile.setOrigin((ballRadius-8) / 2, (ballRadius-8) / 2);*/
-
 
 
 int main()
@@ -359,13 +343,13 @@ int main()
     sf::Font font;
     if (!font.loadFromFile("resources/sansation.ttf"))
         return EXIT_FAILURE;
+
     //Load the BattleShip
     SpaceShip battleShip(sf::Vector2f(gameWidth/32, gameHeight/20), float(gameHeight)/100);
 
     //Load the Missile
     Missile missile(ballRadius - 8, sf::Vector2f(gameWidth/32, gameHeight/20), float(gameHeight)/100);
     
-
     //Create the Asteroid Field
     AsteroidField asteroidField = AsteroidField(80, 8, 2, sf::Color::White, sf::Color::White, 2);
            
@@ -381,10 +365,12 @@ int main()
     sf::Clock clock;
     sf::Event event;
     
-
+    std::cout << "desktop: x=" << gameWidth << ", y=" << gameHeight << std::endl;
     while (window.isOpen())
     {
-        //std::cout << "x variable = " << forx << " y variable = " << fory << " triangle speed variable = " << trianglespeed << " angle of ship = " << triangle.getRotation() << std::endl;
+        //std::cout << " battleShip Velocity: x= " << battleShip.getVelocity().x;
+        //std::cout << "y=" << battleShip.getVelocity().y;
+        //std::cout << " battleShip angle = " << battleShip.getRotation() << std::endl;
 
         // Handle events
         sf::Event event;
@@ -415,8 +401,7 @@ int main()
         if(PlayingGame)
         {
             float deltaTime=4;
-
-
+            
             //Move Spaceship
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
             {
@@ -433,33 +418,34 @@ int main()
                 battleShip.rotate(5);
                 sf::sleep(sleep);
             }
+
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
             {
                 battleShip.rotate(-5);
                 sf::sleep(sleep);
             }
 
-            
             if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
             {
                 if(deltaTime>3)
                 missile.Move(true, battleShip);
                 
                 deltaTime=clock.restart().asSeconds();
-
             }
-           
+
+            // draw objects
             battleShip.draw(window);
             missile.Draw(window, sf::Vector2f(gameWidth,gameHeight), battleShip);
             asteroidField.Draw(window, 2, battleShip, gameWidth, gameHeight);
-          
 
         } else // not playing game
         {
             window.draw(TitleMessage);
         }
+
         // Display things on screen
         window.display();
     }
+
     return EXIT_SUCCESS;
 }
