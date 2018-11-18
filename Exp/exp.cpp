@@ -118,15 +118,13 @@ class Asteroid {
 public:
     Asteroid(int sideLength, int nSides, int lineThickness, sf::Color outlineColor, sf::Color fillColor) :
     _circle(sideLength, nSides)
-{
-    _circle.setOutlineThickness(lineThickness);
-    _circle.setOutlineColor(outlineColor);
-    _circle.setFillColor(fillColor);
-    _pos = _circle.getPosition();
-    _circle.setOrigin(_pos + sf::Vector2f(sideLength, sideLength));
-
-    
-}
+    {
+        _circle.setOutlineThickness(lineThickness);
+        _circle.setOutlineColor(outlineColor);
+        _circle.setFillColor(fillColor);
+        _pos = _circle.getPosition();
+        _circle.setOrigin(_pos + sf::Vector2f(sideLength, sideLength));    
+    }
 
     sf::Vector2f getPosition(){
     return _circle.getPosition();
