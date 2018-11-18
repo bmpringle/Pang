@@ -164,7 +164,7 @@ public:
         if(a==0) {
             for(int i=0; i<=numAsteroids; i++) {
                 Asteroid asteroid = _vAsteroids[i];
-                asteroid.setPosition(gameWidth/2, gameHeight/2);
+                
                 asteroid.Draw(window);
                 a=1;
             }
@@ -174,7 +174,7 @@ public:
                 srand(((std::time(NULL)*3)/2)-5000+1234);
                 int r = rand() % 8;
                 sf::Vector2f add(0, 0);
-                sf::Vector2f pos= asteroid.getPosition();
+                sf::Vector2f pos(gameWidth/2, gameHeight/2);
                 sf::Vector2f one(0, 300);
                 sf::Vector2f two(300, 300);
                 sf::Vector2f three(300, 0);
@@ -183,6 +183,7 @@ public:
                 sf::Vector2f six(-300, -300);
                 sf::Vector2f seven(-300, 0);
                 sf::Vector2f eight(-300, 300);
+                
                 
                 switch(r) {
                     case 1:
@@ -224,6 +225,7 @@ public:
                 asteroid.Draw(window);
                 //std::cout << "Seed = " << time(NULL) << std::endl;
                 //std::cout << "Random number = " << r << std::endl;
+                std::cout<< "Initial Position =" << pos.x << ", " << pos.y << std::endl;
             }
         }
     }
