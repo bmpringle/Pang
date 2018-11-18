@@ -184,35 +184,35 @@ public:
                 
                 
                 switch(r) {
-                    case 1:
+                    case 0:
                     add = one;
                     break;
                     
-                    case 2:
+                    case 1:
                     add = two;
                     break;
                     
-                    case 3:
+                    case 2:
                     add = three;
                     break;
                     
-                    case 4:
+                    case 3:
                     add = four;
                     break;
                     
-                    case 5:
+                    case 4:
                     add = five;
                     break;
                     
-                    case 6:
+                    case 5:
                     add = six;
                     break;
                     
-                    case 7:
+                    case 6:
                     add = seven;
                     break;
                     
-                    case 8:
+                    case 7:
                     add = eight;
                     break;
                 }
