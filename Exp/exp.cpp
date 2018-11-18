@@ -8,6 +8,7 @@
 #include <ctime>
 #include <cstdlib>
 #include <iostream>
+#include <ctime>
 
 ////////////////////////////////////////////////////////////
 /// Entry point of application`a
@@ -150,102 +151,91 @@ class AsteroidField {
 public:
     AsteroidField(int sideLength, int nSides, int lineThickness, sf::Color outlineColor, sf::Color fillColor, uint numAsteroids)
     {
-        for(int i=0; i<=numAsteroids; i++) {
-           
-            
+        for(int i=0; i<=numAsteroids; i++) {            
             Asteroid asteroid(Asteroid(sideLength,  nSides,  lineThickness, outlineColor, fillColor));
-            
             _vAsteroids.push_back(asteroid);
         }   
     }
 
-    void Draw(sf::RenderWindow& window, uint numAsteroids, SpaceShip battleShip){
-        
-        if(a==0){
-        for(int i=0; i<=numAsteroids; i++){
-            
-        Asteroid asteroid = _vAsteroids[i];
-        
-        asteroid.setPosition(battleShip.getPosition());
-        
-       asteroid.Draw(window);
-       a=1;
-    }
-    }else{
-       
-        for(int i=0; i<=numAsteroids; i++){
-        Asteroid asteroid = _vAsteroids[i];
-        srand(time(NULL));
-        int r = rand() % 8;
-        sf::Vector2f add(0, 0);
-        sf::Vector2f pos= asteroid.getPosition();
-        sf::Vector2f one(0, 300);
-        sf::Vector2f two(300, 300);
-        sf::Vector2f three(300, 0);
-        sf::Vector2f four(300, -300);
-        sf::Vector2f five(0, -300);
-        sf::Vector2f six(-300, -300);
-        sf::Vector2f seven(-300, 0);
-        sf::Vector2f eight(-300, 300);
-        switch(r){
-        
-        case 1:
-        add = one;
-        break;
-        
-        case 2:
-        add = two;
-        break;
-        
-        case 3:
-        add = three;
-        break;
-        
-        case 4:
-        add = four;
-        break;
-        
-        case 5:
-        add = five;
-        break;
-        
-        case 6:
-        add = six;
-        break;
-        
-        case 7:
-        add = seven;
-        break;
-        
-        case 8:
-        add = eight;
-        break;
+    void Draw(sf::RenderWindow& window, uint numAsteroids, SpaceShip battleShip, int gameWidth, int gameHeight)
+    {
+        if(a==0) {
+            for(int i=0; i<=numAsteroids; i++) {
+                Asteroid asteroid = _vAsteroids[i];
+                asteroid.setPosition(gameWidth/2, gameHeight/2);
+                asteroid.Draw(window);
+                a=1;
+            }
+        } else {
+            for(int i=0; i<=numAsteroids; i++) {
+                Asteroid asteroid = _vAsteroids[i];
+                srand(((std::time(NULL)*3)/2)-5000+1234);
+                int r = rand() % 8;
+                sf::Vector2f add(0, 0);
+                sf::Vector2f pos= asteroid.getPosition();
+                sf::Vector2f one(0, 300);
+                sf::Vector2f two(300, 300);
+                sf::Vector2f three(300, 0);
+                sf::Vector2f four(300, -300);
+                sf::Vector2f five(0, -300);
+                sf::Vector2f six(-300, -300);
+                sf::Vector2f seven(-300, 0);
+                sf::Vector2f eight(-300, 300);
+                
+                switch(r) {
+                    case 1:
+                    add = one;
+                    break;
+                    
+                    case 2:
+                    add = two;
+                    break;
+                    
+                    case 3:
+                    add = three;
+                    break;
+                    
+                    case 4:
+                    add = four;
+                    break;
+                    
+                    case 5:
+                    add = five;
+                    break;
+                    
+                    case 6:
+                    add = six;
+                    break;
+                    
+                    case 7:
+                    add = seven;
+                    break;
+                    
+                    case 8:
+                    add = eight;
+                    break;
+                }
+                sf::Vector2f newPos(pos.x+add.x, pos.y+add.y);
+                
+                asteroid.setPosition(newPos);
+                _vAsteroids.push_back(asteroid);
+                asteroid.Draw(window);
+                //std::cout << "Seed = " << time(NULL) << std::endl;
+                //std::cout << "Random number = " << r << std::endl;
+            }
         }
-        sf::Vector2f newPos(pos.x+add.x, pos.y+add.y);
-        asteroid.setPosition(newPos);
-        _vAsteroids.push_back(asteroid);
-        asteroid.Draw(window);
-        }
-    }
-    
     }
 private:
     std::vector<Asteroid> _vAsteroids;
     int a=0;
 };
 
-
-
-
-
 class Missile{  
     public:
 
-    
-
-Missile(int radius, sf::Vector2f size, float speed)
-    :_speed(speed),
-    _size(size)
+    Missile(int radius, sf::Vector2f size, float speed)
+    : _speed(speed)
+    , _size(size)
     {
         _circle.setRadius(radius);
         _circle.setOutlineThickness(3);
@@ -284,15 +274,11 @@ Missile(int radius, sf::Vector2f size, float speed)
         return _size;
     }
 
-       
     void Move(bool bForward, SpaceShip battleShip){
             
-                sf::Vector2f vel = battleShip.getVelocity();
-                
-                _circle.move(vel.x*15, vel.y*15);   
-            
-            
-            
+        sf::Vector2f vel = battleShip.getVelocity(); 
+        _circle.move(vel.x*15, vel.y*15);   
+              
     }
 
     void Draw(sf::RenderWindow& window, sf::Vector2f screenSize, SpaceShip battleShip){
@@ -465,7 +451,7 @@ int main()
            
             battleShip.draw(window);
             missile.Draw(window, sf::Vector2f(gameWidth,gameHeight), battleShip);
-            asteroidField.Draw(window, 2, battleShip);
+            asteroidField.Draw(window, 2, battleShip, gameWidth, gameHeight);
           
 
         } else // not playing game
