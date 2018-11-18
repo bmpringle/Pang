@@ -133,6 +133,10 @@ public:
     void setPosition(sf::Vector2f position ){
         _circle.setPosition(position); 
     }
+
+    void Move(sf::Vector2f offs)
+    {
+        _circle.move(offs);
     }
 
     void Draw(sf::RenderWindow& window){
@@ -148,37 +152,36 @@ class AsteroidField {
 public:
     AsteroidField(int sideLength, int nSides, int lineThickness, sf::Color outlineColor, sf::Color fillColor, uint numAsteroids)
     {
-        for(int i=0; i<=numAsteroids; i++) {            
+        for(int i=0; i < numAsteroids; i++) {            
             Asteroid asteroid(Asteroid(sideLength,  nSides,  lineThickness, outlineColor, fillColor));
             _vAsteroids.push_back(asteroid);
+            std::cout<< "Create Position =" << i << ": " << asteroid.getPosition().x << "," << asteroid.getPosition().y << std::endl;
         }   
     }
 
-    void Draw(sf::RenderWindow& window, uint numAsteroids, SpaceShip battleShip, int gameWidth, int gameHeight)
+    void Draw(sf::RenderWindow& window, SpaceShip battleShip, int gameWidth, int gameHeight)
     {
         if(a==0) {
-            for(int i=0; i<=numAsteroids; i++) {
-                Asteroid asteroid = _vAsteroids[i];
-                
+            for(int i=0; i < _vAsteroids.size(); i++) {
+                Asteroid& asteroid = _vAsteroids[i];
+                asteroid.setPosition(sf::Vector2f(gameWidth/2, gameHeight/2));
+                std::cout<< "Astroid Field Initial Position =" << i << ": " << asteroid.getPosition().x << "," << asteroid.getPosition().y << std::endl;
                 asteroid.Draw(window);
                 a=1;
             }
         } else {
-            for(int i=0; i<=numAsteroids; i++) {
-                Asteroid asteroid = _vAsteroids[i];
-                srand(((std::time(NULL)*3)/2)-5000+1234);
+            for(int i=0; i < _vAsteroids.size(); i++) {
+                Asteroid& asteroid = _vAsteroids[i];
                 int r = rand() % 8;
                 sf::Vector2f add(0, 0);
-                sf::Vector2f pos(gameWidth/2, gameHeight/2);
-                sf::Vector2f one(0, 300);
-                sf::Vector2f two(300, 300);
-                sf::Vector2f three(300, 0);
-                sf::Vector2f four(300, -300);
-                sf::Vector2f five(0, -300);
-                sf::Vector2f six(-300, -300);
-                sf::Vector2f seven(-300, 0);
-                sf::Vector2f eight(-300, 300);
-                
+                sf::Vector2f one(0, 3);
+                sf::Vector2f two(3, 3);
+                sf::Vector2f three(3, 0);
+                sf::Vector2f four(3, -3);
+                sf::Vector2f five(0, -3);
+                sf::Vector2f six(-3, -3);
+                sf::Vector2f seven(-3, 0);
+                sf::Vector2f eight(-3, 3);
                 
                 switch(r) {
                     case 0:
@@ -196,7 +199,7 @@ public:
                     case 3:
                     add = four;
                     break;
-                    
+
                     case 4:
                     add = five;
                     break;
@@ -213,14 +216,10 @@ public:
                     add = eight;
                     break;
                 }
-                sf::Vector2f newPos(pos.x+add.x, pos.y+add.y);
-                
-                asteroid.setPosition(newPos);
-                _vAsteroids.push_back(asteroid);
+                asteroid.Move(add);
+                //std::cout<< "Update Position =" << i << ": " << asteroid.getPosition().x << "," << asteroid.getPosition().y << std::endl;
+
                 asteroid.Draw(window);
-                //std::cout << "Seed = " << time(NULL) << std::endl;
-                //std::cout << "Random number = " << r << std::endl;
-                std::cout<< "Initial Position =" << pos.x << ", " << pos.y << std::endl;
             }
         }
     }
@@ -433,7 +432,7 @@ int main()
             // draw objects
             battleShip.draw(window);
             missile.Draw(window, sf::Vector2f(gameWidth,gameHeight), battleShip);
-            asteroidField.Draw(window, 2, battleShip, gameWidth, gameHeight);
+            asteroidField.Draw(window, battleShip, gameWidth, gameHeight);
 
         } else // not playing game
         {
