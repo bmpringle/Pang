@@ -16,11 +16,6 @@
 ///
 ////////////////////////////////////////////////////////////
 
-
-
-
-
-
 class SpaceShip {
     const int sideLength = 80;
     const int nSides = 3;
@@ -127,15 +122,17 @@ public:
     }
 
     sf::Vector2f getPosition(){
-    return _circle.getPosition();
+        return _circle.getPosition();
     }
 
     void setPosition(int x, int y){
-       _circle.setPosition(x, y); 
+
+        _circle.setPosition(x, y); 
     }
 
     void setPosition(sf::Vector2f position ){
-       _circle.setPosition(position); 
+        _circle.setPosition(position); 
+    }
     }
 
     void Draw(sf::RenderWindow& window){
