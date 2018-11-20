@@ -16,7 +16,7 @@
 ///
 ////////////////////////////////////////////////////////////
 
-class SpaceShip : public sf::CircleShape{
+class SpaceShip : public sf::CircleShape {
     static const int sideLength = 80;
     static const int nSides = 3;
     static const int lineThickness = 3;
@@ -45,7 +45,7 @@ public:
         return  sf::Vector2f(x,y);
     }
 
-    void Move(bool bForward, sf::Vector2f screenSize)
+    void move(bool bForward, sf::Vector2f screenSize)
     {
         sf::Vector2f vel = getVelocity();
 
@@ -59,10 +59,10 @@ public:
                     {
                         if (bForward) 
                         {
-                            move(vel.x, vel.y);
+                            sf::CircleShape::move(vel.x, vel.y);
                         } else 
                         {
-                            move(-vel.x, -vel.y);
+                            sf::CircleShape::move(-vel.x, -vel.y);
                         }
                     }
                 }
@@ -94,7 +94,7 @@ public:
         setOrigin(_pos + sf::Vector2f(sideLength, sideLength));    
     }
 
-    void Draw(sf::RenderWindow& window){
+    void draw(sf::RenderWindow& window){
         window.draw(*this);
     }
 
@@ -113,14 +113,14 @@ public:
         }   
     }
 
-    void Draw(sf::RenderWindow& window, SpaceShip battleShip, int gameWidth, int gameHeight)
+    void draw(sf::RenderWindow& window, SpaceShip battleShip, int gameWidth, int gameHeight)
     {
         if(a==0) {
             for(int i=0; i < _vAsteroids.size(); i++) {
                 Asteroid& asteroid = _vAsteroids[i];
                 asteroid.setPosition(sf::Vector2f(gameWidth/2, gameHeight/2));
                 std::cout<< "Astroid Field Initial Position =" << i << ": " << asteroid.getPosition().x << "," << asteroid.getPosition().y << std::endl;
-                asteroid.Draw(window);
+                asteroid.draw(window);
                 a=1;
             }
         } else {
@@ -140,7 +140,7 @@ public:
                 }
                 asteroid.move(add);
                 //std::cout<< "Update Position =" << i << ": " << asteroid.getPosition().x << "," << asteroid.getPosition().y << std::endl;
-                asteroid.Draw(window);
+                asteroid.draw(window);
             }
         }
     }
@@ -167,13 +167,13 @@ class Missile : public sf::CircleShape {
         return _size;
     }
 
-    void Move(bool bForward, SpaceShip battleShip)
+    void move(bool bForward, SpaceShip battleShip)
     {
         sf::Vector2f vel = battleShip.getVelocity();
-        move(vel.x*15, vel.y*15);   
+        sf::CircleShape::move(vel.x*15, vel.y*15);   
     }
 
-    void Draw(sf::RenderWindow& window, sf::Vector2f screenSize, SpaceShip battleShip)
+    void draw(sf::RenderWindow& window, sf::Vector2f screenSize, SpaceShip battleShip)
     {
         if(getPosition().y + getSize().y / 2 < screenSize.y - 149.0f) 
         {
@@ -296,12 +296,12 @@ int main()
             //Move Spaceship
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
             {
-                battleShip.Move(true, sf::Vector2f(gameWidth,gameHeight));
+                battleShip.move(true, sf::Vector2f(gameWidth,gameHeight));
             }
 
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
             {
-                battleShip.Move(false, sf::Vector2f(gameWidth,gameHeight));
+                battleShip.move(false, sf::Vector2f(gameWidth,gameHeight));
             }
 
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::E))
@@ -319,15 +319,15 @@ int main()
             if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
             {
                 if(deltaTime>3)
-                missile.Move(true, battleShip);
+                missile.move(true, battleShip);
                 
                 deltaTime=clock.restart().asSeconds();
             }
 
             // draw objects
             battleShip.draw(window);
-            missile.Draw(window, sf::Vector2f(gameWidth,gameHeight), battleShip);
-            asteroidField.Draw(window, battleShip, gameWidth, gameHeight);
+            missile.draw(window, sf::Vector2f(gameWidth,gameHeight), battleShip);
+            asteroidField.draw(window, battleShip, gameWidth, gameHeight);
 
         } else // not playing game
         {
