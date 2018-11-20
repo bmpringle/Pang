@@ -16,21 +16,13 @@
 ///
 ////////////////////////////////////////////////////////////
 
-class SpaceShip : public sf::CircleShape {
-    static const int sideLength = 80;
-    static const int nSides = 3;
-    static const int lineThickness = 3;
-    const sf::Color outlineColor = sf::Color::Black; 
-    const sf::Color fillColor = sf::Color::White;
+class MovableObject : public sf::CircleShape {
 public:
-    SpaceShip(sf::Vector2f size, float speed)
+    MovableObject(int sideLength, int nSides, sf::Vector2f size, float speed)
         : sf::CircleShape(sideLength, nSides)
         , _size(size)
         , _speed(speed)
     {
-        setOutlineThickness(lineThickness);
-        setOutlineColor(outlineColor);
-        setFillColor(fillColor);
         _pos = getPosition();
         setOrigin(_pos + sf::Vector2f(sideLength, sideLength));
     }
@@ -43,6 +35,32 @@ public:
         double y = _speed * -cos(angleRADS);
         double x = _speed * sin(angleRADS);
         return  sf::Vector2f(x,y);
+    }
+
+    void draw(sf::RenderWindow& window) 
+    {
+        window.draw(*this);
+    }
+
+protected:
+    sf::Vector2f    _pos;
+    sf::Vector2f    _size; 
+    float           _speed;
+};
+
+class SpaceShip : public MovableObject {
+    static const int sideLength = 80;
+    static const int nSides = 3;
+    static const int lineThickness = 3;
+    const sf::Color outlineColor = sf::Color::Black; 
+    const sf::Color fillColor = sf::Color::White;
+public:
+    SpaceShip(sf::Vector2f size, float speed)
+        : MovableObject(sideLength, nSides, size, speed)
+    {
+        setOutlineThickness(lineThickness);
+        setOutlineColor(outlineColor);
+        setFillColor(fillColor);
     }
 
     void move(bool bForward, sf::Vector2f screenSize)
@@ -69,45 +87,29 @@ public:
             }
         }
     }
-
-    void draw(sf::RenderWindow& window) 
-    {
-        window.draw(*this);
-    }
-
-private:
-    sf::Vector2f    _pos;
-    sf::Vector2f    _size; 
-    float           _speed;
 };
 
-
-class Asteroid : public sf::CircleShape {
+class Asteroid : public MovableObject {
+    static const int speed = 0;
+    static const int lineThickness = 3;
+    const sf::Color outlineColor = sf::Color::White; 
+    const sf::Color fillColor = sf::Color::White;
 public:
-    Asteroid(int sideLength, int nSides, int lineThickness, sf::Color outlineColor, sf::Color fillColor)
-    : sf::CircleShape(sideLength, nSides)
+    Asteroid(int sideLength, int nSides)
+    : MovableObject(sideLength, nSides, sf::Vector2f(0,0), speed)
     {
         setOutlineThickness(lineThickness);
         setOutlineColor(outlineColor);
         setFillColor(fillColor);
-        _pos = getPosition();
-        setOrigin(_pos + sf::Vector2f(sideLength, sideLength));    
     }
-
-    void draw(sf::RenderWindow& window){
-        window.draw(*this);
-    }
-
-private:
-    sf::Vector2f    _pos;
 };
 
 class AsteroidField {
 public:
-    AsteroidField(int sideLength, int nSides, int lineThickness, sf::Color outlineColor, sf::Color fillColor, uint numAsteroids)
+    AsteroidField(int sideLength, int nSides, uint numAsteroids)
     {
         for(int i=0; i < numAsteroids; i++) {            
-            Asteroid asteroid(Asteroid(sideLength,  nSides,  lineThickness, outlineColor, fillColor));
+            Asteroid asteroid(sideLength,  nSides);
             _vAsteroids.push_back(asteroid);
             std::cout<< "Create Position =" << i << ": " << asteroid.getPosition().x << "," << asteroid.getPosition().y << std::endl;
         }   
@@ -242,7 +244,7 @@ int main()
     Missile missile(ballRadius - 8, sf::Vector2f(gameWidth/32, gameHeight/20), float(gameHeight)/100);
     
     //Create the Asteroid Field
-    AsteroidField asteroidField = AsteroidField(80, 8, 2, sf::Color::White, sf::Color::White, 2);
+    AsteroidField asteroidField = AsteroidField(80, 8, 2);
            
     // Initialize the pause message
     sf::Text TitleMessage;
