@@ -16,54 +16,29 @@
 ///
 ////////////////////////////////////////////////////////////
 
-class SpaceShip {
-    const int sideLength = 80;
-    const int nSides = 3;
-    const int lineThickness = 3; 
+class SpaceShip : public sf::CircleShape{
+    static const int sideLength = 80;
+    static const int nSides = 3;
+    static const int lineThickness = 3;
     const sf::Color outlineColor = sf::Color::Black; 
     const sf::Color fillColor = sf::Color::White;
 public:
     SpaceShip(sf::Vector2f size, float speed)
-        : _circle(sideLength, nSides)
+        : sf::CircleShape(sideLength, nSides)
         , _size(size)
         , _speed(speed)
     {
-        _circle.setOutlineThickness(lineThickness);
-        _circle.setOutlineColor(outlineColor);
-        _circle.setFillColor(fillColor);
-        _pos = _circle.getPosition();
-        _circle.setOrigin(_pos + sf::Vector2f(sideLength, sideLength));
-    }
-
-    void setPosition(float x, float y)
-    {
-        _circle.setPosition(x,y);
-    }
-
-    sf::Vector2f getPosition(void)
-    {
-        return _circle.getPosition();
-    }
-
-    void rotate(float angle) 
-    {
-        _circle.rotate(angle);
-    }
-
-    float getRotation(void)
-    {
-        return _circle.getRotation();
-    }
-
-    sf::Vector2f getSize(void)
-    {
-        return _size;
+        setOutlineThickness(lineThickness);
+        setOutlineColor(outlineColor);
+        setFillColor(fillColor);
+        _pos = getPosition();
+        setOrigin(_pos + sf::Vector2f(sideLength, sideLength));
     }
 
     sf::Vector2f getVelocity(void)
     {
         //Convert angle to radians
-        double angleRADS = (3.1415926536/180)*(_circle.getRotation());
+        double angleRADS = (3.1415926536/180)*(getRotation());
         //Set x and y
         double y = _speed * -cos(angleRADS);
         double x = _speed * sin(angleRADS);
@@ -74,20 +49,20 @@ public:
     {
         sf::Vector2f vel = getVelocity();
 
-        if(_circle.getPosition().y + _size.y / 2 < screenSize.y - 149.0f || (_circle.getRotation() >= 271 || _circle.getRotation() <= 89)) 
+        if(getPosition().y + _size.y / 2 < screenSize.y - 149.0f || (getRotation() >= 271 || getRotation() <= 89)) 
         {
-            if(_circle.getPosition().y - _size.y / 2 > 50.0f || (_circle.getRotation() <= 269 && _circle.getRotation() >= 91))
+            if(getPosition().y - _size.y / 2 > 50.0f || (getRotation() <= 269 && getRotation() >= 91))
             {
-                if(_circle.getPosition().x - _size.x / 2 > 100.f || (_circle.getRotation() >= 1 && _circle.getRotation() <= 179))
+                if(getPosition().x - _size.x / 2 > 100.f || (getRotation() >= 1 && getRotation() <= 179))
                 {
-                    if(_circle.getPosition().x + _size.x / 2 < screenSize.x - 70.f || (_circle.getRotation() >= 181))
+                    if(getPosition().x + _size.x / 2 < screenSize.x - 70.f || (getRotation() >= 181))
                     {
                         if (bForward) 
                         {
-                            _circle.move(vel.x, vel.y);
+                            move(vel.x, vel.y);
                         } else 
                         {
-                            _circle.move(-vel.x, -vel.y);
+                            move(-vel.x, -vel.y);
                         }
                     }
                 }
@@ -97,54 +72,33 @@ public:
 
     void draw(sf::RenderWindow& window) 
     {
-        window.draw(_circle);
+        window.draw(*this);
     }
 
 private:
-    sf::CircleShape _circle;
     sf::Vector2f    _pos;
     sf::Vector2f    _size; 
     float           _speed;
 };
 
 
-
-class Asteroid {
+class Asteroid : public sf::CircleShape {
 public:
-    Asteroid(int sideLength, int nSides, int lineThickness, sf::Color outlineColor, sf::Color fillColor) :
-    _circle(sideLength, nSides)
+    Asteroid(int sideLength, int nSides, int lineThickness, sf::Color outlineColor, sf::Color fillColor)
+    : sf::CircleShape(sideLength, nSides)
     {
-        _circle.setOutlineThickness(lineThickness);
-        _circle.setOutlineColor(outlineColor);
-        _circle.setFillColor(fillColor);
-        _pos = _circle.getPosition();
-        _circle.setOrigin(_pos + sf::Vector2f(sideLength, sideLength));    
-    }
-
-    sf::Vector2f getPosition(){
-        return _circle.getPosition();
-    }
-
-    void setPosition(int x, int y){
-
-        _circle.setPosition(x, y); 
-    }
-
-    void setPosition(sf::Vector2f position ){
-        _circle.setPosition(position); 
-    }
-
-    void Move(sf::Vector2f offs)
-    {
-        _circle.move(offs);
+        setOutlineThickness(lineThickness);
+        setOutlineColor(outlineColor);
+        setFillColor(fillColor);
+        _pos = getPosition();
+        setOrigin(_pos + sf::Vector2f(sideLength, sideLength));    
     }
 
     void Draw(sf::RenderWindow& window){
-        window.draw(_circle);
+        window.draw(*this);
     }
 
 private:
-    sf::CircleShape _circle;
     sf::Vector2f    _pos;
 };
 
@@ -216,7 +170,7 @@ public:
                     add = eight;
                     break;
                 }
-                asteroid.Move(add);
+                asteroid.move(add);
                 //std::cout<< "Update Position =" << i << ": " << asteroid.getPosition().x << "," << asteroid.getPosition().y << std::endl;
 
                 asteroid.Draw(window);
@@ -228,44 +182,19 @@ private:
     int a=0;
 };
 
-class Missile{  
+class Missile : public sf::CircleShape {  
     public:
     Missile(int radius, sf::Vector2f size, float speed)
         : _speed(speed)
         , _size(size)
     {
-        _circle.setRadius(radius);
-        _circle.setOutlineThickness(3);
-        _circle.setOutlineColor(sf::Color::Black);
-        _circle.setFillColor(sf::Color::White);
-        _circle.setOrigin((radius) / 2, (radius) / 2);
+        setRadius(radius);
+        setOutlineThickness(3);
+        setOutlineColor(sf::Color::Black);
+        setFillColor(sf::Color::White);
+        setOrigin((radius) / 2, (radius) / 2);
     }
  
-    void setPosition(float x, float y)
-    {
-        _circle.setPosition(x,y);
-    }
-
-    void setPosition(sf::Vector2f pos)
-    {
-        setPosition(pos.x,pos.y);
-    }
-
-    sf::Vector2f getPosition(void)
-    {
-        return _circle.getPosition();
-    }
-
-    void rotate(float angle) 
-    {
-        _circle.rotate(angle);
-    }
-
-    float getRotation(void)
-    {
-        return _circle.getRotation();
-    }
-
     sf::Vector2f getSize(void)
     {
         return _size;
@@ -274,43 +203,42 @@ class Missile{
     void Move(bool bForward, SpaceShip battleShip)
     {
         sf::Vector2f vel = battleShip.getVelocity();
-        _circle.move(vel.x*15, vel.y*15);   
+        move(vel.x*15, vel.y*15);   
     }
 
     void Draw(sf::RenderWindow& window, sf::Vector2f screenSize, SpaceShip battleShip)
     {
-        if(_circle.getPosition().y + getSize().y / 2 < screenSize.y - 149.0f) 
+        if(getPosition().y + getSize().y / 2 < screenSize.y - 149.0f) 
         {
-            if(_circle.getPosition().y - getSize().y / 2 > 50.0f)
+            if(getPosition().y - getSize().y / 2 > 50.0f)
             {    
-                if(_circle.getPosition().x - getSize().x / 2 > 100.f)
+                if(getPosition().x - getSize().x / 2 > 100.f)
                 {
-                    if(_circle.getPosition().x + getSize().x / 2 < screenSize.x - 70.f)
+                    if(getPosition().x + getSize().x / 2 < screenSize.x - 70.f)
                     {
                         if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
                         {
-                            window.draw(_circle);
+                            window.draw(*this);
                         }
                     } else 
                     {
-                        _circle.setPosition(battleShip.getPosition());
+                        setPosition(battleShip.getPosition());
                     }  
                 } else 
                 {
-                    _circle.setPosition(battleShip.getPosition());
+                    setPosition(battleShip.getPosition());
                 } 
             } else 
             {
-                _circle.setPosition(battleShip.getPosition());
+                setPosition(battleShip.getPosition());
             }
         } else 
         {
-            _circle.setPosition(battleShip.getPosition());
+            setPosition(battleShip.getPosition());
         }
     }
 
 private:
-    sf::CircleShape _circle;
     float _speed;
     sf::Vector2f _size;
 };
