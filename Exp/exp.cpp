@@ -126,53 +126,20 @@ public:
         } else {
             for(int i=0; i < _vAsteroids.size(); i++) {
                 Asteroid& asteroid = _vAsteroids[i];
-                int r = rand() % 8;
-                sf::Vector2f add(0, 0);
-                sf::Vector2f one(0, 3);
-                sf::Vector2f two(3, 3);
-                sf::Vector2f three(3, 0);
-                sf::Vector2f four(3, -3);
-                sf::Vector2f five(0, -3);
-                sf::Vector2f six(-3, -3);
-                sf::Vector2f seven(-3, 0);
-                sf::Vector2f eight(-3, 3);
-                
-                switch(r) {
-                    case 0:
-                    add = one;
-                    break;
-                    
-                    case 1:
-                    add = two;
-                    break;
-                    
-                    case 2:
-                    add = three;
-                    break;
-                    
-                    case 3:
-                    add = four;
-                    break;
-
-                    case 4:
-                    add = five;
-                    break;
-                    
-                    case 5:
-                    add = six;
-                    break;
-                    
-                    case 6:
-                    add = seven;
-                    break;
-                    
-                    case 7:
-                    add = eight;
-                    break;
+                sf::Vector2f add;
+                switch(rand() % 8) {
+                    case 0: add = sf::Vector2f(0, 3); break;
+                    case 1: add = sf::Vector2f(3, 3); break;
+                    case 2: add = sf::Vector2f(3, 0); break;
+                    case 3: add = sf::Vector2f(3, -3); break;
+                    case 4: add = sf::Vector2f(0, -3); break;
+                    case 5: add = sf::Vector2f(-3, -3); break;
+                    case 6: add = sf::Vector2f(-3, 0); break;
+                    case 7: add = sf::Vector2f(-3, 3); break;
+                    default: assert(0); break;
                 }
                 asteroid.move(add);
                 //std::cout<< "Update Position =" << i << ": " << asteroid.getPosition().x << "," << asteroid.getPosition().y << std::endl;
-
                 asteroid.Draw(window);
             }
         }
