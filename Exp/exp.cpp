@@ -24,11 +24,11 @@ typedef enum {
 
 class MovableObject : public sf::CircleShape {
 public:
-    MovableObject(int radius, int nSides, float speed)
+    MovableObject(int radius, int nSides, float speed, 
+                  E_MOVEMODE move_mode = MOVEMODE_CLAMP)
         : sf::CircleShape(radius, nSides)
         , _speed(speed)
-        , _move_mode(MOVEMODE_CLAMP)
-        //, _move_mode(MOVEMODE_WRAP)
+        , _move_mode(move_mode)
     {
         setOrigin(sf::Vector2f(radius,radius)); // set the origin to the center of polygon
         dumpInit();
