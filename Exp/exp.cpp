@@ -16,15 +16,22 @@
 ///
 ////////////////////////////////////////////////////////////
 
+typedef enum {
+    MOVEMODE_CLAMP      = 0,
+    MOVEMODE_WRAP       = 1,
+    MOVEMODE_COLLIDE    = 2
+} E_MOVEMODE;
+
 class MovableObject : public sf::CircleShape {
 public:
-    MovableObject(int sideLength, int nSides, sf::Vector2f size, float speed)
-        : sf::CircleShape(sideLength, nSides)
-        , _size(size)
+    MovableObject(int radius, int nSides, float speed)
+        : sf::CircleShape(radius, nSides)
         , _speed(speed)
+        , _move_mode(MOVEMODE_CLAMP)
+        //, _move_mode(MOVEMODE_WRAP)
     {
-        _pos = getPosition();
-        setOrigin(_pos + sf::Vector2f(sideLength, sideLength));
+        setOrigin(sf::Vector2f(radius,radius)); // set the origin to the center of polygon
+        dumpInit();
     }
 
     sf::Vector2f getVelocity(void)
@@ -42,11 +49,87 @@ public:
         window.draw(*this);
     }
 
+    static void setBounds(int left, int top, int width, int height)
+    {
+        _bounds = sf::Rect<int>(left,top, width, height);
+    }
+
+    static const sf::Rect<int>& getBounds(void)
+    {
+        return _bounds;
+    }
+
+    typedef int32_t coord_t;
+    void dumpMove(coord_t old_x, coord_t old_y, coord_t inc_x, coord_t inc_y,
+            coord_t new_x, coord_t new_y)
+    {
+        std::cout << "old(" << old_x << ", " << old_y << "), ";
+        std::cout << "inc(" << inc_x << ", " << inc_y << "), ";
+        std::cout << "new(" << new_x << ", " << new_y << "), ";
+        std::cout << "bnd(" << _bounds.width << ", " << _bounds.height << ")" << std::endl;
+    }
+
+    void dumpInit(void)
+    {
+        std::cout << "getPosition(" << getPosition().x << "," << getPosition().y << ")" << std::endl;
+        std::cout << "getOrigin(" << getOrigin().x << "," << getOrigin().y << ")" << std::endl;
+        std::cout << "getRadius(" << getRadius() << ")" << std::endl;
+        std::cout << "bnd(" << _bounds.width << ", " << _bounds.height << ")" << std::endl;
+    }
+
+    double getRadiusX(void)
+    {
+        double angleRADS = (3.1415926536/180) * getRotation();
+        return getRadius() * sin(angleRADS);
+    }
+
+    double getRadiusY(void)
+    {
+        double angleRADS = (3.1415926536/180) * getRotation();
+        return getRadius() * -cos(angleRADS);
+    }
+
+    void move(sf::Vector2f ofs) {return move(ofs.x, ofs.y);}
+
+    void move(float x, float y)
+    {
+        sf::Vector2f pos = getPosition();
+        coord_t old_x = static_cast<coord_t>(pos.x);
+        coord_t old_y = static_cast<coord_t>(pos.y);
+        coord_t inc_x = static_cast<coord_t>(x);
+        coord_t inc_y = static_cast<coord_t>(y);
+
+        switch (_move_mode) {
+            case MOVEMODE_CLAMP: {
+                coord_t new_x = old_x + inc_x;
+                coord_t new_y = old_y + inc_y;
+                dumpMove(old_x, old_y, inc_x, inc_y, new_x, new_y);
+                if (_bounds.contains(new_x + getRadiusX(), new_y + getRadiusY())) {
+                    sf::CircleShape::move(x, y);
+                }
+                break;
+            }
+            case MOVEMODE_WRAP: {
+                coord_t new_x = (old_x + inc_x) >= 0 ? (old_x + inc_x) % _bounds.width : _bounds.width;
+                coord_t new_y = (old_y + inc_y) >= 0 ? (old_y + inc_y) % _bounds.height : _bounds.height;
+                dumpMove(old_x, old_y, inc_x, inc_y, new_x, new_y);
+                sf::CircleShape::setPosition(new_x,new_y);
+                break;
+            }
+            case MOVEMODE_COLLIDE: {
+                assert(0);
+            }
+            default: assert(0);
+        }
+    }
+
 protected:
-    sf::Vector2f    _pos;
-    sf::Vector2f    _size; 
-    float           _speed;
+    float                   _speed;
+    E_MOVEMODE              _move_mode;
+    static sf::Rect<int>    _bounds;
 };
+
+sf::Rect<int> MovableObject::_bounds = sf::Rect<int>(0,0,0,0);
 
 class SpaceShip : public MovableObject {
     static const int sideLength = 80;
@@ -55,8 +138,8 @@ class SpaceShip : public MovableObject {
     const sf::Color outlineColor = sf::Color::Black; 
     const sf::Color fillColor = sf::Color::White;
 public:
-    SpaceShip(sf::Vector2f size, float speed)
-        : MovableObject(sideLength, nSides, size, speed)
+    SpaceShip(float speed)
+        : MovableObject(sideLength, nSides, speed)
     {
         setOutlineThickness(lineThickness);
         setOutlineColor(outlineColor);
@@ -66,26 +149,8 @@ public:
     void move(bool bForward, sf::Vector2f screenSize)
     {
         sf::Vector2f vel = getVelocity();
-
-        if(getPosition().y + _size.y / 2 < screenSize.y - 149.0f || (getRotation() >= 271 || getRotation() <= 89)) 
-        {
-            if(getPosition().y - _size.y / 2 > 50.0f || (getRotation() <= 269 && getRotation() >= 91))
-            {
-                if(getPosition().x - _size.x / 2 > 100.f || (getRotation() >= 1 && getRotation() <= 179))
-                {
-                    if(getPosition().x + _size.x / 2 < screenSize.x - 70.f || (getRotation() >= 181))
-                    {
-                        if (bForward) 
-                        {
-                            sf::CircleShape::move(vel.x, vel.y);
-                        } else 
-                        {
-                            sf::CircleShape::move(-vel.x, -vel.y);
-                        }
-                    }
-                }
-            }
-        }
+        sf::Vector2f ofs = bForward ? vel : -vel;
+        return MovableObject::move(ofs);
     }
 };
 
@@ -96,12 +161,13 @@ class Asteroid : public MovableObject {
     const sf::Color fillColor = sf::Color::White;
 public:
     Asteroid(int sideLength, int nSides)
-    : MovableObject(sideLength, nSides, sf::Vector2f(0,0), speed)
+    : MovableObject(sideLength, nSides, speed)
     {
         setOutlineThickness(lineThickness);
         setOutlineColor(outlineColor);
         setFillColor(fillColor);
     }
+    void move(sf::Vector2f ofs) {sf::CircleShape::move(ofs);}
 };
 
 class AsteroidField {
@@ -237,12 +303,13 @@ int main()
     if (!font.loadFromFile("resources/sansation.ttf"))
         return EXIT_FAILURE;
 
+    MovableObject::setBounds(0, 0, vmDesktop.width, vmDesktop.height);
+
     //Load the BattleShip
-    SpaceShip battleShip(sf::Vector2f(gameWidth/32, gameHeight/20), float(gameHeight)/100);
+    SpaceShip battleShip(float(gameHeight)/100);
 
     //Load the Missile
     Missile missile(ballRadius - 8, sf::Vector2f(gameWidth/32, gameHeight/20), float(gameHeight)/100);
-    
     //Create the Asteroid Field
     AsteroidField asteroidField = AsteroidField(80, 8, 2);
            
