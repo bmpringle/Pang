@@ -167,7 +167,6 @@ public:
         setOutlineColor(outlineColor);
         setFillColor(fillColor);
     }
-    void move(sf::Vector2f ofs) {sf::CircleShape::move(ofs);}
 };
 
 class AsteroidField {
