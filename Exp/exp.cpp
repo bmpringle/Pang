@@ -172,7 +172,8 @@ public:
 
 class AsteroidField {
 public:
-    AsteroidField(int sideLength, int nSides, uint numAsteroids)
+    AsteroidField(int sideLength, int nSides, uint numAsteroids, uint amplitude = 3)
+    : _amplitude(amplitude)
     {
         for(int i=0; i < numAsteroids; i++) {            
             Asteroid asteroid(sideLength,  nSides);
@@ -196,14 +197,14 @@ public:
                 Asteroid& asteroid = _vAsteroids[i];
                 sf::Vector2f add;
                 switch(rand() % 8) {
-                    case 0: add = sf::Vector2f(0, 3); break;
-                    case 1: add = sf::Vector2f(3, 3); break;
-                    case 2: add = sf::Vector2f(3, 0); break;
-                    case 3: add = sf::Vector2f(3, -3); break;
-                    case 4: add = sf::Vector2f(0, -3); break;
-                    case 5: add = sf::Vector2f(-3, -3); break;
-                    case 6: add = sf::Vector2f(-3, 0); break;
-                    case 7: add = sf::Vector2f(-3, 3); break;
+                    case 0: add = sf::Vector2f(0,           _amplitude);  break;
+                    case 1: add = sf::Vector2f(_amplitude,  _amplitude);  break;
+                    case 2: add = sf::Vector2f(_amplitude,  0);           break;
+                    case 3: add = sf::Vector2f(_amplitude,  -_amplitude); break;
+                    case 4: add = sf::Vector2f(0,           -_amplitude); break;
+                    case 5: add = sf::Vector2f(-_amplitude, -_amplitude); break;
+                    case 6: add = sf::Vector2f(-_amplitude, 0);           break;
+                    case 7: add = sf::Vector2f(-_amplitude, _amplitude);  break;
                     default: assert(0); break;
                 }
                 asteroid.move(add);
@@ -214,6 +215,7 @@ public:
     }
 private:
     std::vector<Asteroid> _vAsteroids;
+    int                   _amplitude;
     int a=0;
 };
 
