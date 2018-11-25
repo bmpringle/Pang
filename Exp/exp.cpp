@@ -139,7 +139,8 @@ class SpaceShip : public MovableObject {
     const sf::Color fillColor = sf::Color::White;
 public:
     SpaceShip(float speed)
-        : MovableObject(sideLength, nSides, speed)
+        : MovableObject(sideLength, nSides, speed,
+                        MOVEMODE_WRAP)
     {
         setOutlineThickness(lineThickness);
         setOutlineColor(outlineColor);
@@ -161,7 +162,8 @@ class Asteroid : public MovableObject {
     const sf::Color fillColor = sf::Color::White;
 public:
     Asteroid(int sideLength, int nSides)
-    : MovableObject(sideLength, nSides, speed)
+        : MovableObject(sideLength, nSides, speed,
+                    MOVEMODE_WRAP)
     {
         setOutlineThickness(lineThickness);
         setOutlineColor(outlineColor);
