@@ -103,7 +103,7 @@ public:
             case MOVEMODE_CLAMP: {
                 coord_t new_x = old_x + inc_x;
                 coord_t new_y = old_y + inc_y;
-                dumpMove(old_x, old_y, inc_x, inc_y, new_x, new_y);
+                //dumpMove(old_x, old_y, inc_x, inc_y, new_x, new_y);
                 if (_bounds.contains(new_x + getRadiusX(), new_y + getRadiusY())) {
                     sf::CircleShape::move(x, y);
                 }
@@ -112,7 +112,7 @@ public:
             case MOVEMODE_WRAP: {
                 coord_t new_x = (old_x + inc_x) >= 0 ? (old_x + inc_x) % _bounds.width : _bounds.width;
                 coord_t new_y = (old_y + inc_y) >= 0 ? (old_y + inc_y) % _bounds.height : _bounds.height;
-                dumpMove(old_x, old_y, inc_x, inc_y, new_x, new_y);
+                //dumpMove(old_x, old_y, inc_x, inc_y, new_x, new_y);
                 sf::CircleShape::setPosition(new_x,new_y);
                 break;
             }
