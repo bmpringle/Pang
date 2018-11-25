@@ -296,23 +296,27 @@ int main()
             float deltaTime=4;
             
             //Move Spaceship
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) ||
+                sf::Keyboard::isKeyPressed(sf::Keyboard::Up) )
             {
                 battleShip.move(true, sf::Vector2f(gameWidth,gameHeight));
             }
 
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) ||
+                sf::Keyboard::isKeyPressed(sf::Keyboard::Down) )
             {
                 battleShip.move(false, sf::Vector2f(gameWidth,gameHeight));
             }
 
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::E))
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::E) ||
+                sf::Keyboard::isKeyPressed(sf::Keyboard::Right) )
             {                
                 battleShip.rotate(5);
                 sf::sleep(sleep);
             }
 
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q) ||
+                sf::Keyboard::isKeyPressed(sf::Keyboard::Left) )
             {
                 battleShip.rotate(-5);
                 sf::sleep(sleep);
